@@ -62,6 +62,14 @@ enum {
 };
 
 /* -------------------------------------------------------------------------- */
+// Windowing
+typedef struct {
+    SDL_Window* window = NULL;
+    SDL_Renderer* renderer = NULL;
+    int width;
+    int height;
+} Window;
+
 typedef struct {
     SDL_Texture* texture;
 } Texture;

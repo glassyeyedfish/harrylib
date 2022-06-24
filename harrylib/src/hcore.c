@@ -23,9 +23,8 @@
 // Logging
 static int logLevel = LOG_LEVEL_TRACE;
 
-// Windowing
-static SDL_Window* window = NULL;
-static SDL_Renderer* renderer = NULL;
+// Windowing 
+static bool isWindowOpen = false;
 
 // Input
 #define MAX_EVENT_KEY_STATES 512
@@ -33,7 +32,6 @@ static SDL_Renderer* renderer = NULL;
 static bool eventClosingWindowID = NULL;
 static bool eventCurrentKeyState[MAX_EVENT_KEY_STATES] = { false };
 static bool eventPreviousKeyState[MAX_EVENT_KEY_STATES] = { false };
-
 
 
 /*
@@ -80,9 +78,14 @@ void logLog(
 
 /* -------------------------------------------------------------------------- */
 bool 
-openWindow(int width, int height, const char* title) 
+openWindow(Window* window, int width, int height, const char* title) 
 {
     bool success = true;
+
+    window->window = NULL;
+    window->renderer = NULL;
+    window->width = -1;
+    window->height = -1;
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         logError("Failed to init SDL! SDL Error: %s", SDL_GetError());
@@ -97,20 +100,23 @@ openWindow(int width, int height, const char* title)
         }
     }
 
-    window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED,
+    window->window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED,
             SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN);
 
     if (success) {
         if (window == NULL) {
             logError("Failed to create window! SDL Error: %s", SDL_GetError());
             success = false;
-        } 
+        } else {
+            window->width = width;
+            window->heihgt = height;
+        }
     }
 
     if (success) {
-        renderer = SDL_CreateRenderer(window, -1, 
+        window->renderer = SDL_CreateRenderer(window->window, -1, 
                 SDL_RENDERER_ACCELERATED);
-        if (renderer == NULL) {
+        if (window->renderer == NULL) {
             logError("Failed to create renderer for window! SDL Error: %s",
                     SDL_GetError());
             success = false;
@@ -132,6 +138,7 @@ closeWindow(void)
 {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    IMG_Quit();
     SDL_Quit();
     logTrace("Closed window!");
 }
