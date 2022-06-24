@@ -23,8 +23,9 @@
 // Logging
 static int logLevel = LOG_LEVEL_TRACE;
 
-// Windowing 
-static bool isWindowOpen = false;
+// Windowing
+SDL_Window* g_Window = NULL;
+SDL_Renderer* g_Renderer = NULL;
 
 // Input
 #define MAX_EVENT_KEY_STATES 512
@@ -78,14 +79,9 @@ void logLog(
 
 /* -------------------------------------------------------------------------- */
 bool 
-openWindow(Window* window, int width, int height, const char* title) 
+openWindow(int width, int height, const char* title) 
 {
     bool success = true;
-
-    window->window = NULL;
-    window->renderer = NULL;
-    window->width = -1;
-    window->height = -1;
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         logError("Failed to init SDL! SDL Error: %s", SDL_GetError());
@@ -100,28 +96,25 @@ openWindow(Window* window, int width, int height, const char* title)
         }
     }
 
-    window->window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED,
+    g_Window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED,
             SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN);
 
     if (success) {
-        if (window == NULL) {
+        if (g_Window == NULL) {
             logError("Failed to create window! SDL Error: %s", SDL_GetError());
             success = false;
-        } else {
-            window->width = width;
-            window->heihgt = height;
-        }
+        }    
     }
 
     if (success) {
-        window->renderer = SDL_CreateRenderer(window->window, -1, 
+        g_Renderer = SDL_CreateRenderer(g_Window, -1, 
                 SDL_RENDERER_ACCELERATED);
-        if (window->renderer == NULL) {
-            logError("Failed to create renderer for window! SDL Error: %s",
+        if (g_Renderer == NULL) {
+            logError("Failed to create g_Renderer for window! SDL Error: %s",
                     SDL_GetError());
             success = false;
         } else {
-            SDL_SetRenderDrawColor(renderer, 0x0F, 0x0F, 0x0F, 0xFF);
+            SDL_SetRenderDrawColor(g_Renderer, 0x0F, 0x0F, 0x0F, 0xFF);
         }
     }
 
@@ -136,8 +129,8 @@ openWindow(Window* window, int width, int height, const char* title)
 void
 closeWindow(void)
 {
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
+    SDL_DestroyRenderer(g_Renderer);
+    SDL_DestroyWindow(g_Window);
     IMG_Quit();
     SDL_Quit();
     logTrace("Closed window!");
@@ -147,7 +140,7 @@ closeWindow(void)
 bool 
 windowShouldClose()
 {
-    if (SDL_GetWindowID(window) == eventClosingWindowID) {
+    if (SDL_GetWindowID(g_Window) == eventClosingWindowID) {
         eventClosingWindowID = NULL;
         return true;
     } else {
@@ -254,14 +247,15 @@ beginDrawing()
 void 
 endDrawing()
 {
-    SDL_RenderPresent(renderer);
+    SDL_RenderPresent(g_Renderer);
 }
 
 /* -------------------------------------------------------------------------- */
 void
-clearBackground()
+clearBackground(Color color)
 {
-    SDL_RenderClear(renderer);
+    SDL_SetRenderDrawColor(g_Renderer, color.r, color.g, color.b, color.a);
+    SDL_RenderClear(g_Renderer);
 }
 
 /*
@@ -281,7 +275,7 @@ loadTexture(Texture* texture, const char* path)
     }
 
     if (success) {
-        texture->texture = SDL_CreateTextureFromSurface(renderer, img);
+        texture->texture = SDL_CreateTextureFromSurface(g_Renderer, img);
         if (texture->texture == NULL) {
             logError("Failed to create texture from %s! IMG Error: %s", 
                     path, IMG_GetError());
@@ -299,7 +293,7 @@ loadTexture(Texture* texture, const char* path)
 void
 drawTexture(Texture texture)
 {
-    SDL_RenderCopy(renderer, texture.texture, NULL, NULL);
+    SDL_RenderCopy(g_Renderer, texture.texture, NULL, NULL);
 }
 /* ========================================================================== *\
  *
