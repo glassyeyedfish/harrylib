@@ -45,10 +45,6 @@ typedef struct {
 } Color;
 
 typedef struct {
-    int x, y, w, h;
-} RectI;
-
-typedef struct {
     SDL_Texture* texture;
 } Texture;
 

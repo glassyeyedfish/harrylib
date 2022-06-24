@@ -9,6 +9,11 @@
 #define HARRYLIB_SHAPES_H
 
 /* -------------------------------------------------------------------------- */
+typedef struct {
+    int x, y, w, h;
+} RectI;
+
+/* -------------------------------------------------------------------------- */
 void drawRectI(RectI rect, Color color);
 void fillRectI(RectI rect, Color color);
 
