@@ -14,8 +14,9 @@ typedef struct {
 } RectI;
 
 /* -------------------------------------------------------------------------- */
-void drawRectI(RectI rect, Color color);
-void fillRectI(RectI rect, Color color);
+bool setDrawScale(int x, int y);
+void drawRect(int x, int y, int w, int h, Color color);
+void fillRect(int x, int y, int w, int h, Color color);
 
 #endif
 

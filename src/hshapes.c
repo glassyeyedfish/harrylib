@@ -19,29 +19,31 @@ extern SDL_Window* g_Window;
 extern SDL_Renderer* g_Renderer;
 
 /* -------------------------------------------------------------------------- */
-void
-drawRectI(RectI rect, Color color)
+bool
+setDrawScale(int x, int y) 
 {
-    SDL_Rect sdlrect = {
-        rect.x,
-        rect.y,
-        rect.w,
-        rect.h
-    };
+    bool success = true;
+    if (SDL_RenderSetScale(g_Renderer, (float) x, (float) y) < 0) {
+        logError("Failed to scale renderer! SDL Error: %s", SDL_GetError());
+        success = false;
+    }
+    return success;
+}
+
+/* -------------------------------------------------------------------------- */
+void
+drawRect(int x, int y, int w, int h, Color color)
+{
+    SDL_Rect sdlrect = { x, y, w, h };
     SDL_SetRenderDrawColor(g_Renderer, color.r, color.g, color.b, color.a);
     SDL_RenderDrawRect(g_Renderer, &sdlrect);
 }
 
 /* -------------------------------------------------------------------------- */
 void
-fillRectI(RectI rect, Color color)
+fillRect(int x, int y, int w, int h, Color color)
 {
-    SDL_Rect sdlrect = {
-        rect.x,
-        rect.y,
-        rect.w,
-        rect.h
-    };
+    SDL_Rect sdlrect = { x, y, w, h };
     SDL_SetRenderDrawColor(g_Renderer, color.r, color.g, color.b, color.a);
     SDL_RenderFillRect(g_Renderer, &sdlrect);
 }
