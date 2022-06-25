@@ -96,6 +96,13 @@ openWindow(int width, int height, const char* title)
         }
     }
 
+    if (sucess) {
+        if (TFF_Init() < -1) {
+            logError("Failed to init SDL_ttf! TTF Error: %s", TTF_GetError());
+            success = false;
+        }
+    }
+
     g_Window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED,
             SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN);
 
