@@ -1,5 +1,6 @@
-# Build folder
+# Build folder + Template
 test/*
+src/template
 
 # Prerequisites
 *.d
