@@ -262,9 +262,12 @@ endDrawing(void)
     SDL_RenderPresent(g_Renderer);
 
     // FPS Junk
+#ifndef __EMSCRIPTEN__
     uint64_t syncTime = msPerFrame - (SDL_GetTicks64() - currentTime);
     if (syncTime > msPerFrame) { syncTime = msPerFrame; }
     SDL_Delay(syncTime);
+#endif
+
     previousTime = currentTime;
     currentTime = SDL_GetTicks64();
     delta = currentTime - previousTime;
