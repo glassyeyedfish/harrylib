@@ -284,7 +284,7 @@ endDrawing(void)
 
 /* -------------------------------------------------------------------------- */
 void
-clearBackground(Color color)
+clearWindow(Color color)
 {
     SDL_SetRenderDrawColor(g_Renderer, color.r, color.g, color.b, color.a);
     SDL_RenderClear(g_Renderer);

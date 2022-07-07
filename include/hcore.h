@@ -74,7 +74,7 @@ bool isKeyReleased(uint32_t key);
 
 void beginDrawing(void);
 void endDrawing(void);
-void clearBackground(Color color);
+void clearWindow(Color color);
 bool setDrawScale(uint32_t x, uint32_t y);
 
 double getDeltaTime(void);
