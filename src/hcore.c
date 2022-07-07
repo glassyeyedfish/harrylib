@@ -5,14 +5,6 @@
  *
 \* ========================================================================== */
 
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <time.h>
-
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-
 #include "hcore.h"
 
 /*
@@ -21,7 +13,7 @@
 
 /* -------------------------------------------------------------------------- */
 // Logging
-static int logLevel = LOG_LEVEL_TRACE;
+static uint8_t logLevel = LOG_LEVEL_TRACE;
 
 // Windowing
 SDL_Window* g_Window = NULL;
@@ -34,23 +26,33 @@ static bool eventClosingWindowID = NULL;
 static bool eventCurrentKeyState[MAX_EVENT_KEY_STATES] = { false };
 static bool eventPreviousKeyState[MAX_EVENT_KEY_STATES] = { false };
 
+// Util
+uint64_t currentTime = 0;
+uint64_t previousTime = 0;
+uint64_t delta = 0;
+uint64_t accumulatedTime = 0;
+uint32_t frames = 0;
+uint32_t fps = 0;
+uint32_t targetFPS = 60;
+uint32_t msPerFrame = 0;
+
 
 /*
  * LOGGING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 
 /* -------------------------------------------------------------------------- */
-void setLogLevel(int level)
+void setLogLevel(uint8_t level)
 {
     logLevel = level;
 }
 
 /* -------------------------------------------------------------------------- */
 void logLog(
-        int level,
+        uint8_t level,
         const char* label, 
         const char* file, 
-        int line, 
+        uint32_t line, 
         const char* fmt, ...)
 {
     if (level >= logLevel) {
@@ -79,9 +81,11 @@ void logLog(
 
 /* -------------------------------------------------------------------------- */
 bool 
-openWindow(int width, int height, const char* title) 
+openWindow(uint32_t width, uint32_t height, const char* title) 
 {
     bool success = true;
+
+    msPerFrame = (uint32_t) ((1.0 / targetFPS) * 1000.0);
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         logError("Failed to init SDL! SDL Error: %s", SDL_GetError());
@@ -96,8 +100,8 @@ openWindow(int width, int height, const char* title)
         }
     }
 
-    if (sucess) {
-        if (TFF_Init() < -1) {
+    if (success) {
+        if (TTF_Init() < -1) {
             logError("Failed to init SDL_ttf! TTF Error: %s", TTF_GetError());
             success = false;
         }
@@ -145,7 +149,7 @@ closeWindow(void)
 
 /* -------------------------------------------------------------------------- */
 bool 
-windowShouldClose()
+windowShouldClose(void)
 {
     if (SDL_GetWindowID(g_Window) == eventClosingWindowID) {
         eventClosingWindowID = NULL;
@@ -199,18 +203,19 @@ pollEvents(void)
                 break;
         }
     }
+
 }
 
 /* -------------------------------------------------------------------------- */
 bool
-isKeyUp(int key)
+isKeyUp(uint32_t key)
 {
     return !eventCurrentKeyState[key];
 }
 
 /* -------------------------------------------------------------------------- */
 bool
-isKeyPressed(int key)
+isKeyPressed(uint32_t key)
 {
     if (!eventPreviousKeyState[key] && eventCurrentKeyState[key]) {
         return true;
@@ -221,14 +226,14 @@ isKeyPressed(int key)
 
 /* -------------------------------------------------------------------------- */
 bool
-isKeyDown(int key)
+isKeyDown(uint32_t key)
 {
     return eventCurrentKeyState[key];
 }
 
 /* -------------------------------------------------------------------------- */
 bool
-isKeyReleased(int key)
+isKeyReleased(uint32_t key)
 {
     if (eventPreviousKeyState[key] && !eventCurrentKeyState[key]) {
         return true;
@@ -246,15 +251,33 @@ isKeyReleased(int key)
 
 /* -------------------------------------------------------------------------- */
 void
-beginDrawing()
+beginDrawing(void)
 {
 }
 
 /* -------------------------------------------------------------------------- */
 void 
-endDrawing()
+endDrawing(void)
 {
     SDL_RenderPresent(g_Renderer);
+
+    // FPS Junk
+    uint64_t syncTime = msPerFrame - (SDL_GetTicks64() - currentTime);
+    if (syncTime > msPerFrame) { syncTime = msPerFrame; }
+    SDL_Delay(syncTime);
+    previousTime = currentTime;
+    currentTime = SDL_GetTicks64();
+    delta = currentTime - previousTime;
+
+    frames++;
+    accumulatedTime += delta;
+
+    if (accumulatedTime > 1000) {
+        fps = frames;
+        accumulatedTime -= 1000;
+        frames = 0;
+        logInfo("%d", fps);
+    }
 }
 
 /* -------------------------------------------------------------------------- */
@@ -265,43 +288,35 @@ clearBackground(Color color)
     SDL_RenderClear(g_Renderer);
 }
 
-/*
- * TEXTURES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- */
-
 /* -------------------------------------------------------------------------- */
 bool
-loadTexture(Texture* texture, const char* path)
+setDrawScale(uint32_t x, uint32_t y) 
 {
     bool success = true;
-    texture->texture = NULL;
-    SDL_Surface* img = IMG_Load(path);
-    if (img == NULL) {
-        logError("Failed to load image! IMG Error: %s", IMG_GetError());
+    if (SDL_RenderSetScale(g_Renderer, (float) x, (float) y) < 0) {
+        logError("Failed to scale renderer! SDL Error: %s", SDL_GetError());
         success = false;
     }
-
-    if (success) {
-        texture->texture = SDL_CreateTextureFromSurface(g_Renderer, img);
-        if (texture->texture == NULL) {
-            logError("Failed to create texture from %s! IMG Error: %s", 
-                    path, IMG_GetError());
-            success = false;
-        } else {
-            SDL_FreeSurface(img);
-            logTrace("Loaded texture: '%s'", path);
-        }
-    }
-
     return success;
 }
 
-/* -------------------------------------------------------------------------- */
-void
-drawTexture(Texture texture)
+/*
+ * UTIL ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
+
+
+double 
+getDeltaTime(void)
 {
-    SDL_RenderCopy(g_Renderer, texture.texture, NULL, NULL);
+    return delta;
 }
+
+uint32_t 
+getFPS(void)
+{
+    return fps;
+}
+
 /* ========================================================================== *\
  *
  *  This is free and unencumbered software released into the public domain.

@@ -4,14 +4,28 @@
  *  Lisence is at the bottom of the file.
  *
 \* ========================================================================== */
+#ifndef HARRYLIB_TEXT_H
+#define HARRYLIB_TEXT_H
+
+#include <stdbool.h>
+
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+
 
 /* -------------------------------------------------------------------------- */
 typedef struct {
-    SDL_Font* font;
+    TTF_Font* font;
+    int ptsize;
 } Font;
 
 /* -------------------------------------------------------------------------- */
-bool loadFont(Font* font, const char* path);
+bool loadFont(Font* font, const char* path, int ptsize);
+void unloadFont(Font* font);
+bool drawFont(Font* font, const char* text, int x, int y, int ptsize, 
+        Color color);
+
+#endif
 
 /* ========================================================================== *\
  *

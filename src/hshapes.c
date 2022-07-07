@@ -5,12 +5,6 @@
  *
 \* ========================================================================== */
 
-#include <stdbool.h>
-#include <stdio.h>
-
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-
 #include "hcore.h"
 #include "hshapes.h"
 
@@ -19,20 +13,8 @@ extern SDL_Window* g_Window;
 extern SDL_Renderer* g_Renderer;
 
 /* -------------------------------------------------------------------------- */
-bool
-setDrawScale(int x, int y) 
-{
-    bool success = true;
-    if (SDL_RenderSetScale(g_Renderer, (float) x, (float) y) < 0) {
-        logError("Failed to scale renderer! SDL Error: %s", SDL_GetError());
-        success = false;
-    }
-    return success;
-}
-
-/* -------------------------------------------------------------------------- */
 void
-drawRect(int x, int y, int w, int h, Color color)
+drawRect(uint32_t x, uint32_t y, uint32_t w, uint32_t h, Color color)
 {
     SDL_Rect sdlrect = { x, y, w, h };
     SDL_SetRenderDrawColor(g_Renderer, color.r, color.g, color.b, color.a);
@@ -41,7 +23,7 @@ drawRect(int x, int y, int w, int h, Color color)
 
 /* -------------------------------------------------------------------------- */
 void
-fillRect(int x, int y, int w, int h, Color color)
+fillRect(uint32_t x, uint32_t y, uint32_t w, uint32_t h, Color color)
 {
     SDL_Rect sdlrect = { x, y, w, h };
     SDL_SetRenderDrawColor(g_Renderer, color.r, color.g, color.b, color.a);

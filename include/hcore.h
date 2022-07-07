@@ -6,7 +6,18 @@
 \* ========================================================================== */
 
 #ifndef HARRYLIB_CORE_H
-#define HHARRYLIB_CORE_H
+#define HARRYLIB_CORE_H
+
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <time.h>
+
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
+
 
 /* -------------------------------------------------------------------------- */
 enum {
@@ -41,35 +52,35 @@ enum {
 
 /* -------------------------------------------------------------------------- */
 typedef struct {
-    unsigned char r, g, b, a;
+    uint8_t r, g, b, a;
 } Color;
 
-typedef struct {
-    SDL_Texture* texture;
-} Texture;
 
 
 /* -------------------------------------------------------------------------- */
-void logLog(int level, const char* label, const char* file, int line, 
+void logLog(uint8_t level, const char* label, const char* file, uint32_t line, 
         const char* fmt, ...);
-void setLogLevel(int level);
+void setLogLevel(uint8_t level);
 
-bool openWindow(int width, int height, const char* title);
-void closeWindow();
-bool windowShouldClose();
+bool openWindow(uint32_t width, uint32_t height, const char* title);
+void closeWindow(void);
+bool windowShouldClose(void);
 
 void pollEvents(void);
-bool isKeyDown(int key);
-bool isKeyPressed(int key);
-bool isKeyUp(int key);
-bool isKeyReleased(int key);
+bool isKeyDown(uint32_t key);
+bool isKeyPressed(uint32_t key);
+bool isKeyUp(uint32_t key);
+bool isKeyReleased(uint32_t key);
 
-bool loadTexture(Texture* texture, const char* path);
-void drawTexture(Texture texture);
+void beginDrawing(void);
+void endDrawing(void);
+void clearBackground(Color color);
+bool setDrawScale(uint32_t x, uint32_t y);
 
-void beginDrawing();
-void endDrawing();
-void clearBackground();
+double getDeltaTime(void);
+uint32_t getFPS(void);
+
+
 
 /* -------------------------------------------------------------------------- */
 #define logTrace(...) logLog(LOG_LEVEL_TRACE, \
@@ -99,6 +110,8 @@ void clearBackground();
 #define BLACK (Color) { 0x00, 0x00, 0x00, 0xFF }
 
 #endif
+
+
 
 /* ========================================================================== *\
  *

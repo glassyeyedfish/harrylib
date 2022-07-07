@@ -5,8 +5,11 @@
  *
 \* ========================================================================== */
 
-#include<SDL2/SDL.h>
-#include<SDL2/SDL_ttf.h>
+#include "hcore.h"
+#include "htext.h"
+
+/* -------------------------------------------------------------------------- */
+extern SDL_Renderer* g_Renderer;
 
 /* -------------------------------------------------------------------------- */
 bool
@@ -16,17 +19,62 @@ loadFont(Font* font, const char* path, int ptsize)
     font->font = NULL;
 
     font->font = TTF_OpenFont(path, ptsize);
+    font->ptsize = ptsize;
     if (font->font == NULL) {
         logError("Failed to load font at '%s'! TTF Error: %s", 
                 path, TTF_GetError());
         success = false;
+    } else {
+        logTrace("Loaded font '%s'!", path);
     }
 
     return success;
 }
 
+/* -------------------------------------------------------------------------- */
+void 
+unloadFont(Font* font)
+{
+    TTF_CloseFont(font->font);
+    font->font = NULL;
+    logTrace("Unloaded font!");
+}
+
+/* -------------------------------------------------------------------------- */
 bool
-drawFont
+drawFont(Font* font, const char* text, int x, int y, int ptsize, Color color)
+{
+    bool success = true;
+    SDL_Surface* surf;
+    SDL_Texture* tex;
+    SDL_Rect rect;
+
+    surf = TTF_RenderText_Solid(font->font, text, 
+            (SDL_Color) {color.r, color.g, color.b, color.a});
+    if (surf == NULL) {
+        logError("Failed to render text to surface. TTF Error: %s", 
+                TTF_GetError());
+        success = false;
+    }
+
+    if (success) {
+        tex = SDL_CreateTextureFromSurface(g_Renderer, surf);
+        if (tex == NULL) {
+            logError("Faild to convert text to texture. SDL Error %s",
+                    SDL_GetError());
+            success = false;
+        }
+    }
+
+    if (success) {
+        rect = (SDL_Rect) {x, y, 
+            surf->w * (ptsize / font->ptsize), 
+            surf->h * (ptsize / font->ptsize)};
+        SDL_RenderCopy(g_Renderer, tex, NULL, &rect);
+    }
+
+    return success;
+}
 
 /* ========================================================================== *\
  *

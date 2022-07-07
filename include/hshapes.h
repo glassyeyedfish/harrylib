@@ -8,15 +8,18 @@
 #ifndef HARRYLIB_SHAPES_H
 #define HARRYLIB_SHAPES_H
 
-/* -------------------------------------------------------------------------- */
-typedef struct {
-    int x, y, w, h;
-} RectI;
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+
+
 
 /* -------------------------------------------------------------------------- */
-bool setDrawScale(int x, int y);
-void drawRect(int x, int y, int w, int h, Color color);
-void fillRect(int x, int y, int w, int h, Color color);
+void drawRect(uint32_t x, uint32_t y, uint32_t w, uint32_t h, Color color);
+void fillRect(uint32_t x, uint32_t y, uint32_t w, uint32_t h, Color color);
 
 #endif
 

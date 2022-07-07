@@ -1,20 +1,28 @@
-# Global Vars
-SOURCE_FILES = test/src/* src/*
-INCLUDE_FLAGS = -Iinclude
+# Vars
+PLATFORM 		= PLATFORM_DESKTOP
+SRC_FILES 		= test/src/*.c src/*.c
+INCLUDE_DIRS 	= -Iinclude
 
-# Desktop Build Vars
+.PHONY: all
+
+ifeq ($(PLATFORM),PLATFORM_DESKTOP)
 CC = gcc
-PREPROCESSOR_FLAGS = 
-COMPILER_FLAGS = -Wall -pedantic -std=c99
-LINKER_FLAGS = -lSDL2 -lSDL2_image
-OUTPUT_FILE = test/build/program
+CFLAGS  = -Wall -std=c99 -lSDL2 -lSDL2_image -lSDL2_ttf
+OUT_FILE = test/build/program
+EXTRA_CMD =
+endif
 
-default: $(SOURCE_FILES)
-	$(CC) $(SOURCE_FILES) $(INCLUDE_FLAGS) $(PREPROCESSOR_FLAGS) \
-		$(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OUTPUT_FILE)
-
-web: $(SOURCE_FILES)
-	emcc $(SOURCE_FILES) $(INCLUDE_FLAGS) -O2 -s USE_SDL=2 -s USE_SDL_IMAGE=2 \
+ifeq ($(PLATFORM),PLATFORM_WEB)
+CC = emcc
+CFLAGS  = -Wall -pedantic -std=c99 -O2 -s USE_SDL=2 -s USE_SDL_IMAGE=2 \
 		-s SDL2_IMAGE_FORMATS=['png'] -s USE_SDL_TTF=2 -s USE_SDL_MIXER=2 \
-		--preload-file test/res -o test/build/index.html
-	cp default.html test/build/index.html
+		--preload-file test/res
+OUT_FILE = test/build/index.html
+# EXTRA_CMD = cp default.html test/build/index.html
+EXTRA_CMD = 
+endif
+
+all: $(SOURCE_FILES)
+	$(CC) $(SRC_FILES) $(INCLUDE_DIRS) $(CFLAGS) -o $(OUT_FILE)
+	$(EXTRA_CMD)
+	
