@@ -9,12 +9,11 @@
 #include "hshapes.h"
 
 /* -------------------------------------------------------------------------- */
-extern SDL_Window* g_Window;
 extern SDL_Renderer* g_Renderer;
 
 /* -------------------------------------------------------------------------- */
 void
-drawRect(uint32_t x, uint32_t y, uint32_t w, uint32_t h, Color color)
+drawRect(int32_t x, int32_t y, int32_t w, int32_t h, Color color)
 {
     SDL_Rect sdlrect = { x, y, w, h };
     SDL_SetRenderDrawColor(g_Renderer, color.r, color.g, color.b, color.a);
@@ -23,11 +22,19 @@ drawRect(uint32_t x, uint32_t y, uint32_t w, uint32_t h, Color color)
 
 /* -------------------------------------------------------------------------- */
 void
-fillRect(uint32_t x, uint32_t y, uint32_t w, uint32_t h, Color color)
+fillRect(int32_t x, int32_t y, int32_t w, int32_t h, Color color)
 {
     SDL_Rect sdlrect = { x, y, w, h };
     SDL_SetRenderDrawColor(g_Renderer, color.r, color.g, color.b, color.a);
     SDL_RenderFillRect(g_Renderer, &sdlrect);
+}
+
+/* -------------------------------------------------------------------------- */
+void 
+drawPixel(int32_t x, int32_t y, Color color)
+{
+    SDL_SetRenderDrawColor(g_Renderer, color.r, color.g, color.b, color.a);
+    SDL_RenderDrawPoint(g_Renderer, x, y);
 }
 
 /* ========================================================================== *\

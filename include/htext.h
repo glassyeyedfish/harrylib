@@ -22,7 +22,7 @@ typedef struct {
 /* -------------------------------------------------------------------------- */
 bool loadFont(Font* font, const char* path, int ptsize);
 void unloadFont(Font* font);
-bool drawFont(Font* font, const char* text, int x, int y, int ptsize, 
+void drawFont(Font* font, const char* text, int x, int y, int ptsize, 
         Color color);
 
 #endif

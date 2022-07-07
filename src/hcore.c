@@ -276,7 +276,6 @@ endDrawing(void)
         fps = frames;
         accumulatedTime -= 1000;
         frames = 0;
-        logInfo("%d", fps);
     }
 }
 

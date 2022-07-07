@@ -18,8 +18,9 @@
 
 
 /* -------------------------------------------------------------------------- */
-void drawRect(uint32_t x, uint32_t y, uint32_t w, uint32_t h, Color color);
-void fillRect(uint32_t x, uint32_t y, uint32_t w, uint32_t h, Color color);
+void drawRect(int32_t x, int32_t y, int32_t w, int32_t h, Color color);
+void fillRect(int32_t x, int32_t y, int32_t w, int32_t h, Color color);
+void drawPixel(int32_t x, int32_t y, Color color);
 
 #endif
 

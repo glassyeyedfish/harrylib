@@ -41,7 +41,7 @@ unloadFont(Font* font)
 }
 
 /* -------------------------------------------------------------------------- */
-bool
+void
 drawFont(Font* font, const char* text, int x, int y, int ptsize, Color color)
 {
     bool success = true;
@@ -72,8 +72,6 @@ drawFont(Font* font, const char* text, int x, int y, int ptsize, Color color)
             surf->h * (ptsize / font->ptsize)};
         SDL_RenderCopy(g_Renderer, tex, NULL, &rect);
     }
-
-    return success;
 }
 
 /* ========================================================================== *\
