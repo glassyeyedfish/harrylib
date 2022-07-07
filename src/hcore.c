@@ -307,7 +307,7 @@ setDrawScale(uint32_t x, uint32_t y)
  */
 
 
-double 
+uint64_t 
 getDeltaTime(void)
 {
     return delta;

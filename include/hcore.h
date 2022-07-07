@@ -77,7 +77,7 @@ void endDrawing(void);
 void clearWindow(Color color);
 bool setDrawScale(uint32_t x, uint32_t y);
 
-double getDeltaTime(void);
+uint64_t getDeltaTime(void);
 uint32_t getFPS(void);
 
 
