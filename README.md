@@ -1,6 +1,6 @@
 # harrylib
 So basically I'm one of those people who roll thier own engines and never actually make a game. 
 
-Please don't use this, it's under heavy devleopment right now. (And might just up and be deleted if I get bored of it.)
+This project is currently abandonded, but I don't have the heart to delete the repo.
 
 Also, Harry is the name of our family cat.
