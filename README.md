@@ -1,6 +1,8 @@
 # harrylib
-So basically I'm one of those people who roll thier own engines and never actually make a game. 
 
-This project is currently abandonded, but I don't have the heart to delete the repo.
+A place for my single-header C99 libraries. Harry is the name of my family's
+cat.
 
-Also, Harry is the name of our family cat.
+Library | Use
+---|---
+gfx | A simple graphics library that uses SDL2.

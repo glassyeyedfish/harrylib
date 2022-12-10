@@ -1,5 +1,5 @@
-#ifndef HARRYLIB_H
-#define HARRYLIB_H
+#ifndef HARRYLIB_GFX_H
+#define HARRYLIB_GFX_H
 
 #define HL_KEYCODE_MOD 1073741625 
 #define HL_KEYCODE_MAX 512
@@ -110,7 +110,7 @@ void hl_draw_font_atlas(hl_font_t* font);
 /* text */
 void hl_draw_text(hl_font_t* font, const char* text, int x, int y, hl_color_t color);
 
-#ifdef HARRYLIB_IMPLEMENTATION
+#ifdef HARRYLIB_GFX_IMPLEMENTATION
 
 
 /*
